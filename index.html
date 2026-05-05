@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LogCompre | Inteligência Logística</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Ícones via Google para dar ar profissional -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+</head>
+<body>
+
+<header>
+    <div class="logo-container">
+        <span class="material-symbols-outlined">inventory_2</span>
+        <h1>LogCompre</h1>
+    </div>
+    <p class="subtitulo">Gestão Integrada de Suprimentos & Logística</p>
+</header>
+
+<nav class="tabs">
+    <button class="tab-btn active" onclick="mostrarAba('consumidor', this)">
+        <span class="material-symbols-outlined">shopping_cart</span> Marketplace
+    </button>
+    <button class="tab-btn" onclick="mostrarAba('empresa', this)">
+        <span class="material-symbols-outlined">leaderboard</span> Admin Panel
+    </button>
+</nav>
+
+<main class="container">
+    <!-- ================= CONSUMIDOR ================= -->
+    <section id="consumidor" class="aba active">
+        <div class="section-header">
+            <h2><span class="material-symbols-outlined">storefront</span> Vitrine de Produtos</h2>
+        </div>
+        <div class="grid" id="vitrine"></div>
+
+        <div class="cart-section">
+            <h2><span class="material-symbols-outlined">shopping_basket</span> Meu Carrinho</h2>
+            <div id="carrinho-container">
+                <ul id="carrinho"></ul>
+                <div class="cart-footer">
+                    <button class="btn-sucesso" onclick="checkout()">
+                        <span class="material-symbols-outlined">check_circle</span> Finalizar Pedido
+                    </button>
+                    <p id="msgCompra" class="msg-alerta"></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="track-section">
+            <h2><span class="material-symbols-outlined">local_shipping</span> Rastreabilidade</h2>
+            <div class="search-box">
+                <input id="codigoRastreio" placeholder="Digite o código do pedido (Ex: PED...)">
+                <button onclick="rastrear()" class="btn-acao">Consultar</button>
+            </div>
+            <div id="resultadoRastreio" class="status-card"></div>
+        </div>
+    </section>
+
+    <!-- ================= EMPRESA ================= -->
+    <section id="empresa" class="aba">
+        <div class="dashboard-cards">
+            <div class="card">
+                <p>Pedidos Realizados</p>
+                <span id="totalPedidos">0</span>
+            </div>
+            <div class="card">
+                <p>Volume em Estoque</p>
+                <span id="totalEstoque">0</span>
+            </div>
+            <div class="card">
+                <p>Logística Reversa</p>
+                <span id="totalDevolucoes">0</span>
+            </div>
+        </div>
+
+        <div class="admin-content">
+            <div class="admin-table">
+                <h3>Monitor de Pedidos</h3>
+                <div class="table-responsive">
+                    <table id="tabelaPedidos">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Itens</th>
+                                <th>Status</th>
+                                <th>Localização</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listaPedidosCorpo"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
