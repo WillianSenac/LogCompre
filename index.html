@@ -1,100 +1,198 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LogCompre | Inteligência Logística</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- Ícones via Google para dar ar profissional -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LogCompre | Inteligência Logística</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+<script src="https://unpkg.com/html5-qrcode" defer></script>
 </head>
 <body>
 
 <header>
-    <div class="logo-container">
-        <span class="material-symbols-outlined">inventory_2</span>
-        <h1>LogCompre</h1>
-    </div>
-    <p class="subtitulo">Gestão Integrada de Suprimentos & Logística</p>
+  <div class="logo-container">
+    <span class="material-symbols-outlined">inventory_2</span>
+    <h1>LogCompre</h1>
+  </div>
+  <p class="subtitulo">Gestão Integrada de Suprimentos &amp; Logística</p>
 </header>
 
 <nav class="tabs">
-    <button class="tab-btn active" onclick="mostrarAba('consumidor', this)">
-        <span class="material-symbols-outlined">shopping_cart</span> Marketplace
-    </button>
-    <button class="tab-btn" onclick="mostrarAba('empresa', this)">
-        <span class="material-symbols-outlined">leaderboard</span> Admin Panel
-    </button>
+  <button class="tab-btn active" onclick="mostrarAba('consumidor', this)">
+    <span class="material-symbols-outlined">shopping_cart</span> Marketplace
+  </button>
+  <button class="tab-btn" onclick="mostrarAba('empresa', this)">
+    <span class="material-symbols-outlined">leaderboard</span> Admin Panel
+  </button>
 </nav>
 
 <main class="container">
-    <!-- ================= CONSUMIDOR ================= -->
-    <section id="consumidor" class="aba active">
-        <div class="section-header">
-            <h2><span class="material-symbols-outlined">storefront</span> Vitrine de Produtos</h2>
-        </div>
-        <div class="grid" id="vitrine"></div>
 
-        <div class="cart-section">
-            <h2><span class="material-symbols-outlined">shopping_basket</span> Meu Carrinho</h2>
-            <div id="carrinho-container">
-                <ul id="carrinho"></ul>
-                <div class="cart-footer">
-                    <button class="btn-sucesso" onclick="checkout()">
-                        <span class="material-symbols-outlined">check_circle</span> Finalizar Pedido
-                    </button>
-                    <p id="msgCompra" class="msg-alerta"></p>
-                </div>
-            </div>
-        </div>
+  <!-- ================= CONSUMIDOR ================= -->
+  <section id="consumidor" class="aba active">
 
-        <div class="track-section">
-            <h2><span class="material-symbols-outlined">local_shipping</span> Rastreabilidade</h2>
+    <div class="section-header">
+      <h2><span class="material-symbols-outlined">storefront</span> Vitrine de Produtos</h2>
+    </div>
+    <div class="grid" id="vitrine"></div>
+
+    <div class="cart-section">
+      <h2><span class="material-symbols-outlined">shopping_basket</span> Meu Carrinho</h2>
+      <div id="carrinho-container">
+        <ul id="carrinho"><li class="vazio">Seu carrinho está vazio.</li></ul>
+        <div class="cart-footer">
+          <div class="cart-total-row">
+            <span>Total</span>
+            <strong id="cartTotal">R$ 0,00</strong>
+          </div>
+          <button class="btn-sucesso" id="btnFinalizar" onclick="abrirCheckout()" disabled>
+            <span class="material-symbols-outlined">check_circle</span> Finalizar Pedido
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="pedidos-section">
+      <h2><span class="material-symbols-outlined">receipt_long</span> Meus Pedidos</h2>
+      <div id="meusPedidos" class="pedidos-lista">
+        <p class="vazio">Você ainda não fez nenhum pedido.</p>
+      </div>
+    </div>
+
+    <div class="track-section">
+      <h2><span class="material-symbols-outlined">local_shipping</span> Rastreabilidade</h2>
+      <div class="search-box">
+        <input id="codigoRastreio" placeholder="Digite o código do pedido (Ex: PED-839201)">
+        <button onclick="rastrear()" class="btn-acao">Consultar</button>
+      </div>
+      <div id="resultadoRastreio" class="status-card" style="display:none;"></div>
+    </div>
+
+  </section>
+
+  <!-- ================= EMPRESA ================= -->
+  <section id="empresa" class="aba">
+
+    <div class="dashboard-cards" id="dashboardCards"></div>
+
+    <div class="admin-content">
+
+      <div class="admin-block">
+        <h3><span class="material-symbols-outlined">list_alt</span> Monitor de Pedidos</h3>
+        <div class="table-responsive">
+          <table id="tabelaPedidos">
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Produtos</th>
+                <th>Valor</th>
+                <th>Status</th>
+                <th>Localização</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="listaPedidosCorpo"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="admin-block">
+        <h3><span class="material-symbols-outlined">inventory</span> Estoque</h3>
+        <div class="table-responsive">
+          <table id="tabelaEstoque">
+            <thead>
+              <tr><th>Produto</th><th>Estoque</th><th>Status</th></tr>
+            </thead>
+            <tbody id="listaEstoqueCorpo"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="admin-block">
+        <h3><span class="material-symbols-outlined">barcode_scanner</span> Leitor de Código de Barras</h3>
+        <div class="leitor-box">
+          <div class="leitor-cam">
+            <div id="leitorCamera"></div>
+            <button class="btn-acao" id="btnAbrirCamera" onclick="alternarCamera()">
+              <span class="material-symbols-outlined">photo_camera</span> Abrir câmera
+            </button>
+          </div>
+          <div class="leitor-manual">
+            <label for="codigoManual">Ou digite o código manualmente</label>
             <div class="search-box">
-                <input id="codigoRastreio" placeholder="Digite o código do pedido (Ex: PED...)">
-                <button onclick="rastrear()" class="btn-acao">Consultar</button>
+              <input id="codigoManual" placeholder="Ex: LOG-PED-839201">
+              <button class="btn-acao" onclick="consultarManual()">Consultar</button>
             </div>
-            <div id="resultadoRastreio" class="status-card"></div>
+            <div id="resultadoScanner"></div>
+          </div>
         </div>
-    </section>
+      </div>
 
-    <!-- ================= EMPRESA ================= -->
-    <section id="empresa" class="aba">
-        <div class="dashboard-cards">
-            <div class="card">
-                <p>Pedidos Realizados</p>
-                <span id="totalPedidos">0</span>
-            </div>
-            <div class="card">
-                <p>Volume em Estoque</p>
-                <span id="totalEstoque">0</span>
-            </div>
-            <div class="card">
-                <p>Logística Reversa</p>
-                <span id="totalDevolucoes">0</span>
-            </div>
+      <div class="admin-block">
+        <h3><span class="material-symbols-outlined">assignment_return</span> Logística Reversa</h3>
+        <div id="listaDevolucoes" class="devolucoes-lista">
+          <p class="vazio">Nenhuma devolução em andamento.</p>
         </div>
+      </div>
 
-        <div class="admin-content">
-            <div class="admin-table">
-                <h3>Monitor de Pedidos</h3>
-                <div class="table-responsive">
-                    <table id="tabelaPedidos">
-                        <thead>
-                            <tr>
-                                <th>Código</th>
-                                <th>Itens</th>
-                                <th>Status</th>
-                                <th>Localização</th>
-                            </tr>
-                        </thead>
-                        <tbody id="listaPedidosCorpo"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </section>
+    </div>
+  </section>
+
 </main>
+
+<!-- ================= MODAL: CHECKOUT ================= -->
+<div class="modal-overlay" id="modalCheckout">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharModal('modalCheckout')">&times;</button>
+    <h2>Finalizar Pedido</h2>
+    <div id="checkoutResumo" class="checkout-resumo"></div>
+    <p class="checkout-total">Subtotal: <strong id="checkoutSubtotal">R$ 0,00</strong></p>
+
+    <fieldset class="pagamento-opcoes">
+      <legend>Forma de pagamento</legend>
+      <label><input type="radio" name="pagamento" value="PIX" checked> PIX</label>
+      <label><input type="radio" name="pagamento" value="Cartão"> Cartão</label>
+      <label><input type="radio" name="pagamento" value="Dinheiro"> Dinheiro</label>
+    </fieldset>
+
+    <button class="btn-sucesso" id="btnConfirmarPagamento" onclick="confirmarPagamento()">
+      Confirmar Pagamento
+    </button>
+    <div id="checkoutStatus" class="checkout-status"></div>
+  </div>
+</div>
+
+<!-- ================= MODAL: PEDIDO DETALHE ================= -->
+<div class="modal-overlay" id="modalPedido">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharModal('modalPedido')">&times;</button>
+    <div id="pedidoDetalheConteudo"></div>
+  </div>
+</div>
+
+<!-- ================= MODAL: DEVOLUÇÃO ================= -->
+<div class="modal-overlay" id="modalDevolucao">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharModal('modalDevolucao')">&times;</button>
+    <h2>Solicitar Devolução</h2>
+    <input type="hidden" id="devolucaoPedidoId">
+    <label for="motivoDevolucao">Motivo</label>
+    <select id="motivoDevolucao">
+      <option>Produto danificado</option>
+      <option>Produto errado</option>
+      <option>Não gostei do produto</option>
+      <option>Atraso na entrega</option>
+      <option>Outro</option>
+    </select>
+    <button class="btn-sucesso" onclick="confirmarDevolucao()">Confirmar devolução</button>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
 
 <script src="script.js"></script>
 </body>
